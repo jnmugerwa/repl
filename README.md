@@ -1,3 +1,4 @@
 # README
 
-A REPL for command-line interaction between a user and a Java program.
+## Stars
+**TODO: Fill out this section!**

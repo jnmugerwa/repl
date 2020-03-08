@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>REPL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">repl</a> &gt; <a href="index.source.html" class="el_package">edu.brown.cs.jmugerwa.repl</a> &gt; <span class="el_source">REPL.java</span></div><h1>REPL.java</h1><pre class="source lang-java linenums">package edu.brown.cs.jmugerwa.repl;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
+
+/**
+ * A read-eval-loop-print framework.
+ *
+ * @author Joshua Nathan Mugerwa
+ * @version 1.0
+ */
+public class REPL {
+    private HashMap&lt;String, Command&gt; validCommands;
+
+    /**
+     * Constructs an empty REPL. Useful for allowing multiple-program functionality.
+     */
+<span class="nc" id="L21">    public REPL() {</span>
+<span class="nc" id="L22">        this.validCommands = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L23">    }</span>
+
+    /**
+     * Constructs a REPL, setting its valid commands.
+     *
+     * @param givenCommands The valid commands for the specific program this REPL will service.
+     */
+<span class="nc" id="L30">    public REPL(HashMap&lt;String, Command&gt; givenCommands) {</span>
+<span class="nc" id="L31">        validCommands = givenCommands;</span>
+<span class="nc" id="L32">    }</span>
+
+    /**
+     * Merges the given command map with the current map.
+     *
+     * @param commandMap The Map of valid commands.
+     */
+    public void addCommands(HashMap&lt;String, Command&gt; commandMap) {
+<span class="nc" id="L40">        this.validCommands.putAll(commandMap);</span>
+<span class="nc" id="L41">    }</span>
+
+    /**
+     * Reads, evaluates, and prints output from evaluations. Will loop until user manually ends.
+     */
+    public void loop() throws IOException {
+        String in;
+<span class="nc" id="L48">        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));</span>
+<span class="nc" id="L49">        System.out.print(&quot;REPL_in &gt;&gt; &quot;);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        while ((in = reader.readLine()) != null) {</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">            if (in.equals(&quot;quit&quot;) || in.equals(&quot;exit&quot;)) {</span>
+<span class="nc" id="L52">                break;</span>
+            } else {
+<span class="nc" id="L54">                this.evaluate(in);</span>
+            }
+
+<span class="nc" id="L57">            System.out.print(&quot;REPL_in &gt;&gt; &quot;);</span>
+        }
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Evaluates a user's command.
+     *
+     * @param input A line, parsed from a file.
+     */
+    public void evaluate(String input) {
+<span class="nc" id="L67">        String[] splitInput = input.trim().split(&quot;\\s+&quot;);</span>
+        try {
+<span class="nc" id="L69">            validCommands.get(splitInput[0]).execute(Arrays.copyOfRange(splitInput,</span>
+                    1, splitInput.length));
+<span class="nc" id="L71">        } catch (Exception e) {</span>
+<span class="nc" id="L72">            System.out.println(&quot;ERROR: An argument you gave didn't quite work. Here are all of them: &quot;);</span>
+<span class="nc" id="L73">            System.out.println(Arrays.toString(splitInput));</span>
+<span class="nc" id="L74">        }</span>
+<span class="nc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
