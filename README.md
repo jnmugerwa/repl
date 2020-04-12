@@ -17,10 +17,10 @@ of your program by typing a Command keyword and arguments relevant to that comma
 
 **Example**
     
-    "FindShortestPath latitude1 longitude1 latitude2 longitude2"
+    "mdb file_path"
+    "connect actor1 actor2"
     
-    The REPL will execute the Command mapped to "FindShortestPath" with the arguments "latitude1 longitude1 latitude2 
-    longitude2".
+    The REPL will execute the Commands mapped to "mdb" and "connect" with the arguments "file_path" and "actor1 actor2", respectively.
     
 !["A similar command being executed."](/misc/example_execution.PNG)
 
