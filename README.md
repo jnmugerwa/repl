@@ -21,7 +21,7 @@ of your program by typing a Command keyword and arguments relevant to that comma
     "connect actor1 actor2"
     
     The REPL will execute the Commands mapped to "mdb" and "connect" with the arguments "file_path" and 
-    "actor1 actor2", respectively.
+    "actor1 actor2", respectively. Results are printed below.
     
 !["A similar command being executed."](/misc/example_execution.PNG)
 
