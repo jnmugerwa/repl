@@ -1,37 +1,52 @@
 package edu.brown.cs.jmugerwa.repl;
 
+import edu.brown.cs.jmugerwa.repl.util.Command;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+
 /**
- * Testing for Commands.
+ * A simple test for Command functionality (correct printing and execution of results).
  *
  * @author Joshua Nathan Mugerwa
  * @version 1.0
  */
 public class CommandTest {
+    private StringWriter out;
+    private PrintWriter printWriter;
+
+    @Before
+    public void setUp() {
+        out = new StringWriter();
+        printWriter = new PrintWriter(out);
+    }
 
     /**
-     * Tests that a Command properly executes.
+     * Tests basic command functionality.
      */
     @Test
     public void testCommandExecution() {
         class PrintCommand implements Command {
             @Override
-            public void execute(String[] args) {
+            public void execute(String[] args, PrintWriter pw) {
                 for (String arg : args) {
                     try {
-                        Integer properDType = Integer.valueOf(arg);
-                        System.out.println(properDType);
-                    } catch (Exception e) {
-                        System.out.println("ERROR: One or more of the arguments could not be cast from "
-                                + "String to The proper type.");
+                        Double value = Double.valueOf(arg);
+                        pw.println(value);
+                    } catch (NumberFormatException e) {
+                        pw.println(String.format("ERROR: The following argument could not be parsed: %s. \nContinuing.",
+                                arg));
                     }
                 }
             }
         }
-
-        PrintCommand p = new PrintCommand();
-        String[] args = {"1", "2"};
-        p.execute(args);
+        String[] args = {"1.0", "error1", "error2", "4.0", "error3"};
+        new PrintCommand().execute(args, printWriter);
+        Arrays.stream(args).forEach(x -> {
+            assert (out.toString().contains(x));
+        });
     }
 }

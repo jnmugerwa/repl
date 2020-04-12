@@ -1,8 +1,14 @@
 package edu.brown.cs.jmugerwa.repl;
 
+import edu.brown.cs.jmugerwa.repl.util.Command;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -13,50 +19,61 @@ import static org.junit.Assert.assertArrayEquals;
  * @version 1.0
  */
 public class REPLTest {
+    private StringWriter out;
+    private PrintWriter printWriter;
+    private REPL repl;
+
+    @Before
+    public void setUp() {
+        out = new StringWriter();
+        printWriter = new PrintWriter(out);
+        repl = new REPL(printWriter);
+    }
 
     /**
-     * Tests that the REPL's parsing is correct, using k-nearest-neighbors commands.
+     * Tests REPL's parsing logic.
+     * <p>
+     * This test case: A 3-D K-Nearest-Neighbors command with keyword "neighbors" and parameters "k" and
+     * coordinate "x y z"
      */
     @Test
     public void testREPLParsing() {
         String s = "neighbors k x y z";
-        String[] inputSplit = s.trim().split("\\s+");
+        String[] inputSplit = repl.parseInput(s);
         String[] correctSplit = {"neighbors", "k", "x", "y", "z"};
         assertArrayEquals(correctSplit, inputSplit);
     }
 
     /**
-     * Tests underlying REPL execution logic.
+     * Tests REPL execution logic (erroneous and valid).
      */
     @Test
-    public void testExecutionLogic() {
-        class TestCommand1 implements Command {
+    public void testExecution() {
+        class IncrementAndPrintCommand implements Command {
             @Override
-            public void execute(String[] args) {
-                for (String arg : args) {
-                    System.out.println(arg + "-> command 1");
+            public void execute(String[] args, PrintWriter pw) {
+                for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
+                    try {
+                        Integer value = Integer.parseInt(arg) + 1;
+                        pw.println(value);
+                    } catch (NumberFormatException e) {
+                        pw.println(String.format("ERROR: The following argument could not be parsed: %s. \nContinuing.",
+                                arg));
+                    }
                 }
             }
         }
-
-        class TestCommand2 implements Command {
-            @Override
-            public void execute(String[] args) {
-                for (String arg : args) {
-                    System.out.println(arg + "-> command 2");
-                }
-            }
-        }
-
-        TestCommand1 t1 = new TestCommand1();
-        TestCommand2 t2 = new TestCommand2();
-
-        HashMap<String, Command> testCommands = new HashMap<String, Command>();
-        testCommands.put("TestCommand1", t1);
-        testCommands.put("TestCommand2", t2);
-
-        // Testing execution flow via HashMap.
-        testCommands.get("TestCommand1").execute(new String[]{"hi", "bye"});
-        testCommands.get("TestCommand2").execute(new String[]{"hola", "adios"});
+        // Creating REPL's command map and pushing into REPL.
+        Map<String, Command> commandMap = new HashMap<>();
+        commandMap.put("IncrementAndPrint", new IncrementAndPrintCommand());
+        repl.addCommands(commandMap);
+        // Bad execution.
+        repl.evaluate("NonExistantCommand 1 2 3");
+        // Valid execution.
+        repl.evaluate("IncrementAndPrint 1 2 3");
+        assert (out.toString().contains("ERROR: Invalid argument."));
+        assert (out.toString().contains("2"));
+        assert (out.toString().contains("3"));
+        assert (out.toString().contains("4"));
     }
 }
