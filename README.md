@@ -7,6 +7,7 @@ A read-eval-print-loop framework; Given a program and a list of valid commands, 
 command-line execution of program functionality.
 
 **How To Use**
+
 Create a project ("project") with the main execution class extending REPLRunnable. Within this
 execution class you'll need to create Commands that capture your project's functionality. Then, create
 a Map of keywords to Command instances and store for access by the REPL.
